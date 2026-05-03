@@ -70,13 +70,13 @@ public class AxialTuner extends OpMode {
         double turn = 0;
         if (maintainHeading) {
             double headingError = 0 - this.localizer.getPose().getHeading(); // Target heading is 0 degrees
-            turn = headingController.calculate(headingError);
+            turn = headingController.calculateFromError(headingError);
         } else {
             headingController.reset(); // Prevent derivative kick when not maintaining heading
         }
 
         double error = target - this.localizer.getPose().getX();
-        this.drivetrain.moveWithVectors(this.controller.calculate(error), 0, turn);
+        this.drivetrain.moveWithVectors(this.controller.calculateFromError(error), 0, turn);
     }
 
     @Override

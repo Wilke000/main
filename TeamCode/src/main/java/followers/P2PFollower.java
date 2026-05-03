@@ -70,10 +70,10 @@ public class P2PFollower extends Follower {
 
         // Note: powers are clipped to max powers defined in constants
         Vector translational = new Vector(
-                axialController.calculate(translationError.getX()),
-                strafeController.calculate(translationError.getY())
+                axialController.calculateFromError(translationError.getX()),
+                strafeController.calculateFromError(translationError.getY())
         ).rotated(-pose.getHeading()); // Rotate to the robot's frame of reference
-        double turn = -headingController.calculate(headingError);
+        double turn = -headingController.calculateFromError(headingError);
 
         drivetrain.drive(translational.getX(), translational.getY(), turn);
     }
