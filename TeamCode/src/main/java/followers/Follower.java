@@ -18,6 +18,7 @@ public abstract class Follower {
     protected Drivetrain drivetrain;
     protected Localizer localizer;
 
+    protected boolean holdingPose;
     protected boolean isBusy;
 
     protected Pose targetPose;
@@ -72,13 +73,19 @@ public abstract class Follower {
         drivetrain.drive(x, y, turn, 0);
     }
 
+    public void holdPose(Pose pose) {
+        this.setTargetPose(pose);
+        holdingPose = true;
+    }
+
     /**
      * Stops the robot and aborts any active path following
      */
     public void stop() {
         drivetrain.stop();
         isBusy = false;
-        targetPose = null; // Clear target pose to prevent further movement until a new target is set
+        targetPose = null;
+        holdingPose = false;
     }
 
     /**
@@ -107,6 +114,7 @@ public abstract class Follower {
      */
     protected void setTargetPose(Pose targetPose) {
         isBusy = true;
+        holdingPose = false;
         this.targetPose = targetPose.copy();
         this.targetPose.setDistanceUnit(Distance.Units.INCHES);
         this.targetPose.setAngleUnit(Angle.Units.RADIANS);

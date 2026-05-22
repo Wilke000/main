@@ -53,8 +53,8 @@ public class AutoTest extends LinearOpMode {
                     if (!timerStarted) {
                         waitTimer.reset();
                         timerStarted = true;
-                        follower.stop();
-                    } else if (waitTimer.milliseconds() >= 1000) {
+                        follower.holdPose(poses[iterator]);
+                    } else if (waitTimer.milliseconds() >= 2000) {
                         timerStarted = false;
                         iterator++;
                         follower.setTargetPose(poses[iterator]);
@@ -63,12 +63,7 @@ public class AutoTest extends LinearOpMode {
                     }
                     telemetry.addData("Target Pose", follower.getTargetPose().toString());
                 } else {
-                    // We've reached the final pose
-                    if (follower.headingAtTarget() && follower.axialAtTarget() && follower.strafeAtTarget()) {
-                        follower.stop();
-                    } else {
-                        follower.setTargetPose(poses[poses.length - 1]); // Hold position
-                    }
+                    follower.holdPose(poses[poses.length - 1]);
                     telemetry.addData("Status", "Done");
                 }
             }
