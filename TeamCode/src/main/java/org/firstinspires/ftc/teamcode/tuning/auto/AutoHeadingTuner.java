@@ -37,7 +37,7 @@ public class AutoHeadingTuner extends LinearOpMode {
             drivetrain = constants.buildOnlyDrivetrain(hardwareMap);
             localizer = constants.buildOnlyLocalizer(hardwareMap, Pose.zero());
             controller = new PDFLController(coefficients);
-            controller.useAsAngularController();
+            controller.setAngularController();
             timer = new ElapsedTime();
             telemetry = PanelsTelemetry.INSTANCE.getFtcTelemetry();
 
@@ -209,7 +209,7 @@ public class AutoHeadingTuner extends LinearOpMode {
     }
 
     private void turnTo(double error) {
-        drivetrain.moveWithVectors(0, 0, -controller.calculateFromError(error));
+        drivetrain.moveWithVectors(0, 0, -controller.calculate(error));
     }
 
     private void update() {

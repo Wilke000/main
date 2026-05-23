@@ -47,22 +47,23 @@ public class AutoTest extends LinearOpMode {
         while (opModeIsActive()) {
             follower.update();
 
-            if (!follower.isBusy()) {
+            if (!follower.isBusy() || timerStarted) {
                 if (iterator < poses.length - 1) {
                     // Wait before moving on for the robot to settle
                     if (!timerStarted) {
                         waitTimer.reset();
                         timerStarted = true;
-                    } else if (waitTimer.milliseconds() >= 1000) {
+                        follower.holdPose(poses[iterator]);
+                    } else if (waitTimer.milliseconds() >= 2000) {
                         timerStarted = false;
                         iterator++;
                         follower.setTargetPose(poses[iterator]);
                     } else {
                         continue; // Wait until the timer has elapsed
                     }
+                    telemetry.addData("Target Pose", follower.getTargetPose().toString());
                 } else {
-                    // We've reached the final pose
-                    follower.stop(); // Hold position
+                    follower.holdPose(poses[poses.length - 1]);
                     telemetry.addData("Status", "Done");
                 }
             }
@@ -73,7 +74,6 @@ public class AutoTest extends LinearOpMode {
             }
 
             telemetry.addData("Current Pose", follower.getPose().toString());
-            telemetry.addData("Target Pose", follower.getTargetPose().toString());
             telemetry.addData("Velocity", follower.getVelocity().toString());
             telemetry.addData("Is Busy", follower.isBusy());
             telemetry.addData("Axial at target", follower.axialAtTarget());

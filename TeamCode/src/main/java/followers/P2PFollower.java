@@ -38,10 +38,14 @@ public class P2PFollower extends Follower {
      * @param targetPose the new target pose
      */
     public void setTargetPose(Pose targetPose) {
+        // Use the unexposed method from the Follower class (converts target pose to inches and radians)
+        super.setTargetPose(targetPose);
         this.axialController.reset();
+        this.axialController.setTarget(targetPose.getX());
         this.strafeController.reset();
+        this.strafeController.setTarget(targetPose.getY());
         this.headingController.reset();
-        super.setTargetPose(targetPose); // Use the unexposed method from the Follower class
+        this.headingController.setTarget(targetPose.getHeading());
     }
 
     public boolean axialAtTarget() { return constants.axialController.isAtTarget(); }
@@ -53,28 +57,30 @@ public class P2PFollower extends Follower {
     @Override
     public void update() {
         localizer.update();
+        Pose pose = localizer.getPose();
+        double currentX = pose.getXComponent().getIn();
+        double currentY = pose.getYComponent().getIn();
+        double currentHeading = pose.getHeadingComponent().getRad();
 
         if (!isBusy) {
             return; // No need to calculate anything if we're not busy
         }
 
-        Pose pose = localizer.getPose();
-        Vector translationError = targetPose.toVec().subtract(pose.toVec());
-        double headingError = targetPose.getHeading() - pose.getHeading(); // Controller handles wrapping
-
         if (axialController.isAtTarget() && strafeController.isAtTarget() && headingController.isAtTarget()) {
-            isBusy = false;
-            drivetrain.stop();
-            return;
+            if (!this.holdingPose) {
+                isBusy = false;
+                drivetrain.stop();
+                return;
+            }
         }
 
         // Note: powers are clipped to max powers defined in constants
         Vector translational = new Vector(
-                axialController.calculateFromError(translationError.getX()),
-                strafeController.calculateFromError(translationError.getY())
-        ).rotated(-pose.getHeading()); // Rotate to the robot's frame of reference
-        double turn = -headingController.calculateFromError(headingError);
+                axialController.calculate(currentX),
+                -strafeController.calculate(currentY)
+        ).rotated(-currentHeading); // Rotate to the robot's frame of reference
+        double turn = -headingController.calculate(currentHeading);
 
-        drivetrain.drive(translational.getX(), translational.getY(), turn);
+        drivetrain.drive(-translational.getX(), translational.getY(), turn);
     }
 }
