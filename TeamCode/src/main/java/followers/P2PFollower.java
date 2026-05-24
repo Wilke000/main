@@ -74,13 +74,12 @@ public class P2PFollower extends Follower {
             }
         }
 
-        // Note: powers are clipped to max powers defined in constants
+        // Rotate backwards to convert from field to robot centric (CCW rotation = positive)
         Vector translational = new Vector(
                 axialController.calculate(currentX),
                 strafeController.calculate(currentY)
-        ).rotated(-currentHeading); // Rotate to the robot's frame of reference
-        double turn = -headingController.calculate(currentHeading);
-
-        drivetrain.drive(-translational.getY(), translational.getX(), turn);
+        ).rotated(-currentHeading);
+        double turn = headingController.calculate(currentHeading);
+        drivetrain.drive(translational.getX(), translational.getY(), turn);
     }
 }
