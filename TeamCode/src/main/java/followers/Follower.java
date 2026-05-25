@@ -134,7 +134,7 @@ public abstract class Follower {
      * @return the robot's current velocity estimate from the localizer
      */
     public Pose getVelocity() { return localizer.getVelocity(); }
-    public void breakFollowing(Drivetrain drivetrain) {
-        drivetrain.stop();
+    public void breakFollowing() {
+        this.stop();
     }
 }

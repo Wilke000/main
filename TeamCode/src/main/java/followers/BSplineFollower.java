@@ -83,7 +83,7 @@ public class BSplineFollower extends Follower {
             if (Math.abs(headingError) < constants.headingTolerance) {
                 if (path.isLastSegment()) {
                     this.isBusy = false;
-                    this.breakFollowing(drivetrain);
+                    this.breakFollowing();
                 } else {
                     path.advance();
                 }
@@ -105,7 +105,7 @@ public class BSplineFollower extends Follower {
                 holdTimerInitialized = false;
                 if (path.isLastSegment()) {
                     this.isBusy = false;
-                    this.breakFollowing(drivetrain);
+                    this.breakFollowing();
                 } else {
                     path.advance();
                 }
@@ -157,7 +157,7 @@ public class BSplineFollower extends Follower {
                     this.setTargetPose(new Pose(finalPosition.getX(), finalPosition.getY(), targetHeading));
                     this.holdingPose = true;
                     this.isBusy = false;
-                    this.breakFollowing(drivetrain);
+                    this.breakFollowing();
                 } else {
                     path.advance();
                 }
