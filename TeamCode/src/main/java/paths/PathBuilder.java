@@ -1,7 +1,6 @@
 package paths;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import paths.geometry.BSpline;
 import paths.geometry.Line;
@@ -31,6 +30,43 @@ public class PathBuilder {
     private static final InterpolationStyle DEFAULT_INTERPOLATION = InterpolationStyle.SMOOTH_START_TO_END;
     private InterpolationStyle currentStyle = DEFAULT_INTERPOLATION;
 
+    /**
+     *
+     */
+    public enum SegmentType {
+        BSPLINE,
+        LINE,
+        TURN
+    }
+    /**
+     * Core unified routing method to append different trajectory segments dynamically.
+     *
+     * @param type  The type of segment to construct (LINE_TO, BSPLINE, TURN_TO)
+     * @param poses The target destination(s). For LINE_TO and TURN_TO, pass one Pose.
+     * For BSPLINE, pass intermediate waypoints followed by the end Pose.
+     * @return The current PathBuilder instance for method chaining.
+     */
+    public PathBuilder newPath(SegmentType type, Pose... poses) {
+        if (poses == null || poses.length == 0) {
+            throw new IllegalArgumentException("You must provide at least one Pose destination!");
+        }
+        switch (type) {
+            case LINE:
+                return this.lineTo(poses[0]);
+
+            case TURN:
+                return this.turnTo(poses[0].getHeadingComponent());
+
+            case BSPLINE:
+                if (poses.length < 2) {
+                    throw new IllegalArgumentException("A B-Spline requires at least 2 points!");
+                }
+                return this.bSplineTo(poses);
+
+            default:
+                throw new IllegalArgumentException("Unsupported segment type: " + type);
+        }
+    }
     /**
      * Initializes the PathBuilder with the starting location and heading of the robot.
      *
