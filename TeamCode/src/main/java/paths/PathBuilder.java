@@ -35,16 +35,27 @@ public class PathBuilder {
         TURN
     }
 
-    /**
-     * A lightweight container representing a distinct motion sequence step.
-     */
     public static class Step {
         public final SegmentType type;
         public final Pose[] poses;
+        public InterpolationStyle styleOverride = null;
+        public Function<Double, Angle> functionOverride = null;
 
         public Step(SegmentType type, Pose... poses) {
             this.type = type;
             this.poses = poses;
+        }
+
+        public Step(SegmentType type, InterpolationStyle styleOverride, Pose... poses) {
+            this.type = type;
+            this.poses = poses;
+            this.styleOverride = styleOverride;
+        }
+
+        public Step(SegmentType type, Function<Double, Angle> functionOverride, Pose... poses) {
+            this.type = type;
+            this.poses = poses;
+            this.functionOverride = functionOverride;
         }
     }
 
@@ -59,10 +70,8 @@ public class PathBuilder {
     }
 
     /**
-     * Monolithic routing method to unpack and execute multiple path steps sequentially.
-     *
-     * @param steps An array of Step instructions defining the entire path sequence.
-     * @return The current PathBuilder instance for method chaining.
+     * Monolithic routing method to unpack and execute multiple path steps sequentially,
+     * processing embedded heading overrides completely inside the block.
      */
     public PathBuilder newPath(Step... steps) {
         if (steps == null || steps.length == 0) {
@@ -92,6 +101,12 @@ public class PathBuilder {
 
                 default:
                     throw new IllegalArgumentException("Unsupported segment type: " + step.type);
+            }
+
+            if (step.styleOverride != null) {
+                this.interpolateSegment(step.styleOverride);
+            } else if (step.functionOverride != null) {
+                this.interpolateSegment(step.functionOverride);
             }
         }
         return this;
