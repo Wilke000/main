@@ -169,7 +169,9 @@ public class BSplineFollower extends Follower {
     }
 
     /**
-     * Logic to hold a specific Pose on the field
+     * Logic to actively hold the last robot Pose on the field
+     * Actively means that the robot will move back to the hold pose if its pushed off it for example
+     * Useful option for autos
      */
     private void holdPose() {
         Pose currentPose = getPose();
