@@ -31,6 +31,17 @@ public class Path {
         HOLD
     }
 
+    public static class Callback {
+        public final double s;
+        public final Runnable runnable;
+        public boolean triggered = false;
+
+        public Callback(double s, Runnable runnable) {
+            this.s = s;
+            this.runnable = runnable;
+        }
+    }
+
     public static class PathNode {
         public final NodeType type;
 
@@ -157,5 +168,15 @@ public class Path {
      */
     public void reset() {
         currentIndex = 0;
+        for (PathNode node : nodes) {
+            for (Callback c : node.callbacks) {
+                c.triggered = false;
+            }
+        }
+    }
+    public void withCallback(double s, Runnable callback) {
+        if (!nodes.isEmpty()) {
+            nodes.get(nodes.size() - 1).addCallback(s, callback);
+        }
     }
 }
