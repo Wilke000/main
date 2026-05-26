@@ -1,10 +1,8 @@
 package paths;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import paths.geometry.BSpline;
-import paths.geometry.Line;
 import paths.heading.HeadingInterpolator;
 import paths.heading.InterpolationStyle;
 import util.Angle;
@@ -17,10 +15,7 @@ import util.Vector;
  * This class keeps track of the robot's state (its last known pose) to automatically
  * link segments together, ensuring continuous paths without needing to manually
  * pass the start point for every new curve.
- * NOTE: NOTICE C1 (tangent) CONTINUITY IS NOT GUARANTEED IN THIS BUILDER. This is because almost any
- * path can be created with B-Splines, and anytime a user wants to add a line, they most likely want
- * to stop before continuing. THIS SHOULD BE CLEARLY COMMUNICATED IN THE DOCS, and WILL LIKELY
- * BE CHANGED IN NEAR-FUTURE UPDATES TO FORCE C1 CONTINUITY.
+ * C2 (tangent and acceleration) continuity is guaranteed in this builder
  * <p>
  * Author: DrPixelCat
  * @author Sohum Arora 22985 Paraducks
@@ -105,23 +100,6 @@ public class PathBuilder {
     }
     public PathBuilder interpolateSegment(Function<Double, Angle> function) {
         return interpolateSegment(new HeadingInterpolator(function));
-    }
-
-    /**
-     * Appends a straight line segment to the path.
-     * The line automatically begins at the end of the previous segment (or the start pose).
-     * By default, this segment will use {@link InterpolationStyle#TANGENT_OPTIMAL} for heading.
-     *
-     * @param pose The target end position and heading for the line.
-     * @return The current PathBuilder instance for method chaining.
-     */
-    public PathBuilder lineTo(Pose pose) {
-        PathSegment line = new PathSegment(new Line(lastPose.toVec(), pose.toVec()));
-
-        path.addSegment(line, buildSafeInterpolator(lastPose, pose));
-
-        lastPose = pose;
-        return this;
     }
 
     /**

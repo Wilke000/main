@@ -191,6 +191,11 @@ public class BSplineFollower extends Follower {
         drive(feedback.getX(), feedback.getY(), turnPower, currentPose.getHeading());
     }
 
+    //TODO: Fill out this function
+    private void breakFollowing(Drivetrain drivetrain) {
+
+    }
+
     private double getShortestAngularDistance(double currentRad, double targetRad) {
         double diff = (targetRad - currentRad) % (pi2);
         if (diff > Math.PI) diff -= pi2;

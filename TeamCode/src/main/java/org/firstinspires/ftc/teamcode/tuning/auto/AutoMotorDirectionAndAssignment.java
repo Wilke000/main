@@ -247,7 +247,7 @@ public class AutoMotorDirectionAndAssignment extends LinearOpMode {
                     return new WheelTendencies(MovementDirection.NORTH_WEST, oppRot);
                 case SOUTH_WEST:
                     return new WheelTendencies(MovementDirection.NORTH_EAST, oppRot);
-                case NORTH_WEST:
+                default:
                     return new WheelTendencies(MovementDirection.SOUTH_EAST, oppRot);
             }
         }
