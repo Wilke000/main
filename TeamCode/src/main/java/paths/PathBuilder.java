@@ -246,9 +246,7 @@ public class PathBuilder {
      * TODO: Xenon plz review this I just made something rq
      */
     public PathBuilder addCallback(double s, Runnable callback) {
-        // Enforce bounds so the callback doesn't accidentally get placed outside the curve
         double clampedS = Math.max(0.0, Math.min(1.0, s));
-
         path.withCallback(clampedS, callback);
         return this;
     }

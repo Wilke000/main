@@ -59,7 +59,7 @@ public class Path {
         public Runnable callback = null;
         public boolean callbackTriggered = false;
         // Define at the top of the class
-        public ArrayList<Callback> callbacks = new ArrayList<>();
+        ArrayList<Callback> callbacks = new ArrayList<>();
 
         public PathNode(PathSegment segment, HeadingInterpolator interpolator) {
             this.type = NodeType.DRIVE;
@@ -172,6 +172,11 @@ public class Path {
             for (Callback c : node.callbacks) {
                 c.triggered = false;
             }
+        }
+    }
+    public void withCallback(double s, Runnable callback) {
+        if (!nodes.isEmpty()) {
+            nodes.get(nodes.size() - 1).addCallback(s, callback);
         }
     }
 }
