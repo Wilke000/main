@@ -251,14 +251,13 @@ public class PathBuilder {
         return this;
     }
 
-    public PathBuilder alongWith(double s, Runnable action) {
-        double clampedS = Math.max(0.0, Math.min(1.0, s));
-        path.withCallback(clampedS, action);
+    public PathBuilder alongWith(Runnable action) {
+        path.addParallelAction(action);
         return this;
     }
 
     public PathBuilder andThen(Runnable action) {
-        path.withCallback(1.0, action);
+        path.addAction(action);
         return this;
     }
 }

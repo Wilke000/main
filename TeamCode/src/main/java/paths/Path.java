@@ -28,7 +28,8 @@ public class Path {
     public enum NodeType {
         DRIVE,
         TURN,
-        HOLD
+        HOLD,
+        ACTION
     }
 
     public static class Callback {
@@ -88,6 +89,16 @@ public class Path {
             this.holdDurationSeconds = durationSeconds;
         }
 
+        public PathNode(Runnable action) {
+            this.type = NodeType.ACTION;
+            this.segment = null;
+            this.interpolator = null;
+            this.targetHeading = null;
+            this.holdPose = null;
+            this.holdDurationSeconds = 0.0;
+            this.callback = action;
+        }
+
         // Revise this method
         public void addCallback(double s, Runnable callback) {
             callbacks.add(new Callback(s, callback));
@@ -116,6 +127,16 @@ public class Path {
 
     public void addHold(Pose holdPose, double durationSeconds) {
         nodes.add(new PathNode(holdPose, durationSeconds));
+    }
+
+    public void addAction(Runnable action) {
+        nodes.add(new PathNode(action));
+    }
+
+    public void addParallelAction(Runnable action) {
+        if (!nodes.isEmpty()) {
+            nodes.get(nodes.size() - 1).callback = action;
+        }
     }
 
     public PathNode getCurrentNode() {
@@ -175,6 +196,7 @@ public class Path {
     public void reset() {
         currentIndex = 0;
         for (PathNode node : nodes) {
+            node.callbackTriggered = false;
             for (Callback c : node.callbacks) {
                 c.triggered = false;
             }
