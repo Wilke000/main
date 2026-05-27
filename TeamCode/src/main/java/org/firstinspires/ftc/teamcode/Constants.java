@@ -15,7 +15,7 @@ import drivetrains.constants.SwerveModuleConstants;
 import localizers.constants.LocalizerConstants;
 import localizers.constants.PinpointConstants;
 import followers.constants.FollowerConstants;
-import followers.constants.P2PFollowerConstants;
+import followers.constants.BSplineFollowerConstants;
 import util.Angle;
 import util.Distance;
 
@@ -58,15 +58,13 @@ public class Constants extends ApexBuilder {
 
     @Override
     public FollowerConstants setFollowerConstants() { // Any FollowerConstants
-        return new P2PFollowerConstants()
-                .setAxialCoeffs(new PDSController.PDSCoefficients(0.0, 0.0, 0.0, 0.0))
-                .setStrafeCoeffs(new PDSController.PDSCoefficients(0.0, 0.0, 0.0, 0.0))
-                .setHeadingCoeffs(new PDSController.PDSCoefficients(0.0, 0.0, 0.0, 0.0))
-                .setHeadingTolerance(Angle.fromDeg(2.0))
-                .setAxialTolerance(Distance.fromIn(1.5))
-                .setMaxAxialPower(1)
-                .setStrafeTolerance(Distance.fromIn(1.5))
-                .setMaxTurnPower(1);
+        return new BSplineFollowerConstants()
+                .setTranslationCoeffs(new PDSController.PDSCoefficients(0.1, 0.0, 0.0, 0.0))
+                .setHeadingCoeffs(new PDSController.PDSCoefficients(0.4, 0.0, 0.0, 0.0))
+                .setVelocityFF(0.01)
+                .setHeadingTolerance(Math.toRadians(1.0))
+                .setDistanceTolerance(0.5)
+                .setTTolerance(0.95);
     }
 
 }
