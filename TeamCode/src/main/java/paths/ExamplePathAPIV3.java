@@ -1,7 +1,6 @@
 package paths;
 
-import paths.builders.PathBuilder;
-import paths.builders.TurnBuilder;
+import paths.builders.MovementBuilder; // Updated to use the unified builder
 import paths.movements.FollowerMovement;
 import paths.movements.Path;
 import paths.movements.Turn;
@@ -17,7 +16,7 @@ public class ExamplePathAPIV3 {
     public PoseFactory pose = new PoseFactory(distUnit, angleUnit);
     private Pose startPose;
 
-    // We can store our routine as a sequence of FollowerMovements
+    // Storing our routine components cleanly
     public Path testPath;
     public Turn testTurn;
 
@@ -34,14 +33,13 @@ public class ExamplePathAPIV3 {
     }
 
     /**
-     * A comprehensive showcase of the Movement Builder API.
-     * GitHub snoopers: this is still subject to change. Please send suggestions if you have any!
+     * A comprehensive showcase of the Unified Movement Builder API.
      */
     private void buildRoutine() {
 
         // 1. THE CORE B-SPLINE
-        // Demonstrating standard routing, auto-tightening, and educational warnings
-        testPath = new PathBuilder(startPose)
+        // Explicitly casting the FollowerMovement return type to a concrete Path
+        testPath = (Path) new MovementBuilder(startPose)
                 // A B-Spline can be created with 2 points in Apex because of ghost points that are added during construction
                 .addControlPoints(
                         pose.at(15, 0),              // Standard waypoint
@@ -68,7 +66,8 @@ public class ExamplePathAPIV3 {
 
         // 6. THE TURN BUILDER
         // Seamlessly starts EXACTLY where the last path ended using .getEndPose()
-        testTurn = new TurnBuilder(testPath.getEndPose())
+        // Explicitly casting the FollowerMovement return type to a concrete Turn
+        testTurn = (Turn) new MovementBuilder(testPath.getEndPose())
                 // Defines the final heading the robot should rotate to
                 .turnTo(new Angle(Math.PI / 2))
 

@@ -1,18 +1,87 @@
 package paths.callbacks;
 
-public interface Callback {
-    /**
-     * Gets the action to be executed when the callback condition is met.
-     */
-    Runnable getAction();
+import com.qualcomm.robotcore.util.Range;
+import util.Angle;
+
+/**
+ * A unified callback container capable of handling either distance-based progress triggers
+ * or angular-based orientation triggers during robot movement execution.
+ * * @author Sohum Arora 22985 Paraducks
+ */
+public class Callback {
+
+    public enum CallbackType {
+        DISTANCE,
+        ANGLE
+    }
+
+    private final CallbackType type;
+    private final Runnable action;
+    private boolean triggered = false;
+
+    // Condition parameters (mutually exclusive depending on Type)
+    private final double s;
+    private final Angle theta;
 
     /**
-     * Checks if the callback has already been triggered.
+     * Constructs a physical path distance progress percentage callback.
+     * * @param s The path completion percentage [0.0, 1.0].
+     * @param action The code routine to execute when reached.
      */
-    boolean isTriggered();
+    public Callback(double s, Runnable action) {
+        this.type = CallbackType.DISTANCE;
+        this.s = Range.clip(s, 0.0, 1.0);
+        this.theta = null;
+        this.action = action;
+    }
 
     /**
-     * Sets the triggered state of the callback.
+     * Constructs an angular target sweep callback.
+     * * @param theta The target field/robot orientation angle.
+     * @param action The code routine to execute when reached.
      */
-    void setTriggered(boolean triggered);
+    public Callback(Angle theta, Runnable action) {
+        this.type = CallbackType.ANGLE;
+        this.s = -1.0; // Clear sentinel value to avoid accidental 0.0 distance triggers
+        this.theta = theta;
+        this.action = action;
+    }
+
+    public CallbackType getType() {
+        return type;
+    }
+
+    public Runnable getAction() {
+        return action;
+    }
+
+    public boolean isTriggered() {
+        return triggered;
+    }
+
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
+
+    /**
+     * Retrieves the target path progression factor.
+     * @throws IllegalStateException if this callback is configured as an angular trigger.
+     */
+    public double getS() {
+        if (this.type != CallbackType.DISTANCE) {
+            throw new IllegalStateException("Refusing to fetch distance parameter 's' from an ANGLE-type callback!");
+        }
+        return s;
+    }
+
+    /**
+     * Retrieves the target triggering angle object.
+     * @throws IllegalStateException if this callback is configured as a distance trigger.
+     */
+    public Angle getTheta() {
+        if (this.type != CallbackType.ANGLE) {
+            throw new IllegalStateException("Refusing to fetch target angle 'theta' from a DISTANCE-type callback!");
+        }
+        return theta;
+    }
 }

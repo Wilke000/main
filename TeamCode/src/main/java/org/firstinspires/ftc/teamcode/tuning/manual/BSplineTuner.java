@@ -13,8 +13,8 @@ import drivetrains.Drivetrain;
 import followers.MovementFollower;
 import followers.constants.BSplineFollowerConstants;
 import localizers.Localizer;
+import paths.builders.MovementBuilder; // Updated import to use the unified builder
 import paths.movements.Path;
-import paths.builders.PathBuilder;
 import util.Pose;
 
 /**
@@ -84,11 +84,13 @@ public class BSplineTuner extends OpMode {
     private void runPath(boolean forward) {
         if (!pathActive) {
             if (!forward) {
-                currentPath = new PathBuilder(localizer.getPose())
+                // Explicit downcast to Path since MovementBuilder.build() returns polymorphic FollowerMovement
+                currentPath = (Path) new MovementBuilder(localizer.getPose())
                         .addControlPoints(new Pose(24, 24, Math.toRadians(90)), new Pose(0, 0, 0))
                         .build();
             } else {
-                currentPath = new PathBuilder(localizer.getPose())
+                // Explicit downcast to Path since MovementBuilder.build() returns polymorphic FollowerMovement
+                currentPath = (Path) new MovementBuilder(localizer.getPose())
                         .addControlPoints(new Pose(24, 24, Math.toRadians(90)), new Pose(48, 0, 0))
                         .build();
             }
