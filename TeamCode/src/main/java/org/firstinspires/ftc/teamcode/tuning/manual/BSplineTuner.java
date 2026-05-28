@@ -15,7 +15,7 @@ import followers.constants.BSplineFollowerConstants;
 import localizers.Localizer;
 import paths.movements.Path;
 import paths.builders.PathBuilder;
-import util.Pose;
+import geometry.Pose;
 
 /**
  * OpMode for tuning the BSpline follower with Panels. Matches the architecture of AxialTuner.
@@ -115,6 +115,7 @@ public class BSplineTuner extends OpMode {
         } else if (gamepad1.a) { // Move back to start position when A is held
             runPath(false);
         } else {
+            // Safe fallback sequence clearing operational active paths to protect drive system
             follower.stop();
             drivetrain.stop();
             pathActive = false;
