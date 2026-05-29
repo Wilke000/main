@@ -186,7 +186,7 @@ public class PathBuilder {
             Pose currentPose = rawPoses[i];
 
             if (!intermediateWarningSent && Double.isFinite(currentPose.getHeading().getRad())) {
-                path.addWarning("APEX WARNING: Intermediate B-Spline headings are ignored! Only the " +
+                path.addWarning("APEX WARNING: Intermediate B-Spline headings are currently ignored! Only the " +
                         "final pose heading controls the end heading.");
                 intermediateWarningSent = true;
             }
